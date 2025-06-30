@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Terminal, Shield, Copy, Zap, AlertTriangle } from 'lucide-react';
+import { Terminal, Shield, Copy, Zap, AlertTriangle, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import CommandHistory from '@/components/CommandHistory';
 import EthicalDisclaimer from '@/components/EthicalDisclaimer';
+import AboutSection from '@/components/AboutSection';
 import { generateBashCommand } from '@/utils/aiCommandGenerator';
 
 interface GeneratedCommand {
@@ -24,6 +25,7 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCommands, setGeneratedCommands] = useState<GeneratedCommand[]>([]);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [showAbout, setShowAbout] = useState(false);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -63,6 +65,11 @@ const Index = () => {
     }
   };
 
+  const clearHistory = () => {
+    setGeneratedCommands([]);
+    toast.success('Command history cleared!');
+  };
+
   if (showDisclaimer) {
     return <EthicalDisclaimer onAccept={() => setShowDisclaimer(false)} />;
   }
@@ -82,13 +89,27 @@ const Index = () => {
             Generate Linux terminal commands for ethical hacking and security research.
             Powered by AI, guided by ethics.
           </p>
-          <div className="flex items-center justify-center space-x-2">
-            <Shield className="h-5 w-5 text-primary" />
-            <Badge variant="outline" className="terminal-border text-primary">
-              Ethical Use Only
-            </Badge>
+          <div className="flex items-center justify-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Shield className="h-5 w-5 text-primary" />
+              <Badge variant="outline" className="terminal-border text-primary">
+                Ethical Use Only
+              </Badge>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAbout(!showAbout)}
+              className="terminal-border"
+            >
+              <Info className="h-4 w-4 mr-2" />
+              {showAbout ? 'Hide' : 'Show'} About
+            </Button>
           </div>
         </div>
+
+        {/* About Section */}
+        {showAbout && <AboutSection />}
 
         {/* Main Input Section */}
         <Card className="terminal-border pulse-glow bg-card">
@@ -197,7 +218,11 @@ const Index = () => {
         )}
 
         {/* Command History Component */}
-        <CommandHistory commands={generatedCommands} onCopy={copyToClipboard} />
+        <CommandHistory 
+          commands={generatedCommands} 
+          onCopy={copyToClipboard}
+          onClear={clearHistory}
+        />
 
         {/* Footer */}
         <div className="text-center py-8 border-t border-border">

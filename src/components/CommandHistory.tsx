@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { History, Copy, Terminal } from 'lucide-react';
+import { History, Copy, Terminal, Trash2 } from 'lucide-react';
 
 interface GeneratedCommand {
   id: string;
@@ -17,9 +17,10 @@ interface GeneratedCommand {
 interface CommandHistoryProps {
   commands: GeneratedCommand[];
   onCopy: (text: string) => void;
+  onClear: () => void;
 }
 
-const CommandHistory: React.FC<CommandHistoryProps> = ({ commands, onCopy }) => {
+const CommandHistory: React.FC<CommandHistoryProps> = ({ commands, onCopy, onClear }) => {
   if (commands.length === 0) {
     return null;
   }
@@ -29,10 +30,21 @@ const CommandHistory: React.FC<CommandHistoryProps> = ({ commands, onCopy }) => 
   return (
     <Card className="terminal-border bg-card">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <History className="h-5 w-5 text-primary" />
-          <span>Recent Commands</span>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center space-x-2">
+            <History className="h-5 w-5 text-primary" />
+            <span>Recent Commands</span>
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClear}
+            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Clear History
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">

@@ -7,7 +7,7 @@ interface CommandResult {
 
 const commandTemplates = {
   'network_scanning': {
-    patterns: ['scan', 'network', 'port', 'discover', 'hosts'],
+    patterns: ['scan', 'network', 'port', 'discover', 'hosts', 'nmap', 'ping'],
     commands: [
       {
         command: 'nmap -sS -sV -O {{target}}',
@@ -22,7 +22,7 @@ const commandTemplates = {
     ]
   },
   'ssl_analysis': {
-    patterns: ['ssl', 'certificate', 'tls', 'https'],
+    patterns: ['ssl', 'certificate', 'tls', 'https', 'cert'],
     commands: [
       {
         command: 'openssl s_client -connect {{domain}}:443 -servername {{domain}} | openssl x509 -noout -dates',
@@ -37,7 +37,7 @@ const commandTemplates = {
     ]
   },
   'log_monitoring': {
-    patterns: ['log', 'monitor', 'suspicious', 'activity', 'auth'],
+    patterns: ['log', 'monitor', 'suspicious', 'activity', 'auth', 'syslog', 'journal'],
     commands: [
       {
         command: 'tail -f /var/log/auth.log | grep -i "failed\\|invalid\\|error"',
@@ -52,7 +52,7 @@ const commandTemplates = {
     ]
   },
   'vulnerability_scanning': {
-    patterns: ['vulnerability', 'vuln', 'security', 'exploit'],
+    patterns: ['vulnerability', 'vuln', 'security', 'exploit', 'nikto', 'burp'],
     commands: [
       {
         command: 'nikto -h {{target_url}}',
@@ -67,7 +67,7 @@ const commandTemplates = {
     ]
   },
   'system_hardening': {
-    patterns: ['harden', 'secure', 'permissions', 'firewall'],
+    patterns: ['harden', 'secure', 'permissions', 'firewall', 'ufw', 'iptables'],
     commands: [
       {
         command: 'find / -type f -perm -4000 2>/dev/null',
@@ -80,41 +80,69 @@ const commandTemplates = {
         category: 'System Hardening'
       }
     ]
+  },
+  'file_analysis': {
+    patterns: ['file', 'search', 'find', 'locate', 'grep', 'analysis'],
+    commands: [
+      {
+        command: 'find /home -name "*.sh" -type f -executable',
+        explanation: 'Searches for executable shell scripts in the /home directory, useful for finding potential backdoors or suspicious scripts.',
+        category: 'File Analysis'
+      },
+      {
+        command: 'grep -r "password\\|secret\\|key" /var/log/ 2>/dev/null',
+        explanation: 'Searches for sensitive information like passwords, secrets, or keys in log files.',
+        category: 'File Analysis'
+      }
+    ]
   }
 };
 
 export async function generateBashCommand(prompt: string): Promise<CommandResult> {
-  const lowerPrompt = prompt.toLowerCase();
+  // Ensure prompt is a string and handle edge cases
+  const cleanPrompt = String(prompt || '').trim().toLowerCase();
   
-  // Simple pattern matching to determine category
+  if (!cleanPrompt) {
+    throw new Error('Please provide a valid prompt');
+  }
+
+  // Enhanced pattern matching with better scoring
+  let bestMatch = null;
+  let bestScore = 0;
+
   for (const [category, data] of Object.entries(commandTemplates)) {
-    if (data.patterns.some(pattern => lowerPrompt.includes(pattern))) {
-      const randomCommand = data.commands[Math.floor(Math.random() * data.commands.length)];
-      
-      // Simple placeholder replacement
-      let command = randomCommand.command;
-      if (command.includes('{{target}}')) {
-        command = command.replace(/\{\{target\}\}/g, 'TARGET_IP_OR_DOMAIN');
+    let score = 0;
+    for (const pattern of data.patterns) {
+      if (cleanPrompt.includes(pattern)) {
+        score += pattern.length; // Longer matches get higher scores
       }
-      if (command.includes('{{domain}}')) {
-        command = command.replace(/\{\{domain\}\}/g, 'example.com');
-      }
-      if (command.includes('{{network_range}}')) {
-        command = command.replace(/\{\{network_range\}\}/g, '192.168.1.0/24');
-      }
-      if (command.includes('{{target_url}}')) {
-        command = command.replace(/\{\{target_url\}\}/g, 'https://example.com');
-      }
-      
-      return {
-        command,
-        explanation: randomCommand.explanation,
-        category: randomCommand.category
-      };
+    }
+    
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = { category, data };
     }
   }
+
+  // If we found a good match, use it
+  if (bestMatch && bestScore > 0) {
+    const randomCommand = bestMatch.data.commands[Math.floor(Math.random() * bestMatch.data.commands.length)];
+    
+    // Enhanced placeholder replacement
+    let command = randomCommand.command;
+    command = command.replace(/\{\{target\}\}/g, 'TARGET_IP_OR_DOMAIN');
+    command = command.replace(/\{\{domain\}\}/g, 'example.com');
+    command = command.replace(/\{\{network_range\}\}/g, '192.168.1.0/24');
+    command = command.replace(/\{\{target_url\}\}/g, 'https://example.com');
+    
+    return {
+      command,
+      explanation: randomCommand.explanation,
+      category: randomCommand.category
+    };
+  }
   
-  // Default fallback for general security commands
+  // Enhanced default fallback commands with better variety
   const defaultCommands = [
     {
       command: 'ps aux | grep -v grep | grep -E "(suspicious_process_name)"',
@@ -130,6 +158,16 @@ export async function generateBashCommand(prompt: string): Promise<CommandResult
       command: 'ls -la /tmp && find /tmp -type f -executable',
       explanation: 'Lists contents of /tmp directory and finds executable files, which could indicate malicious activity.',
       category: 'File Analysis'
+    },
+    {
+      command: 'ss -tuln | grep -E ":22|:80|:443"',
+      explanation: 'Shows listening sockets for common services (SSH, HTTP, HTTPS) using the modern ss command.',
+      category: 'Network Analysis'
+    },
+    {
+      command: 'last -n 20',
+      explanation: 'Shows the last 20 login sessions, useful for detecting unauthorized access attempts.',
+      category: 'Access Monitoring'
     }
   ];
   
