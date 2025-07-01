@@ -1,3 +1,6 @@
+
+import { aiService } from '../services/aiService';
+
 interface CommandResult {
   command: string;
   explanation: string;
@@ -868,7 +871,7 @@ function findBestMatchingCommand(prompt: string, commands: any[]): any | null {
     }
   }
   
-  return bestScore > 0 ? bestMatch : null;
+  return bestScore > 5 ? bestMatch : null; // Increased threshold for better accuracy
 }
 
 export async function generateBashCommand(prompt: string): Promise<CommandResult> {
@@ -878,26 +881,33 @@ export async function generateBashCommand(prompt: string): Promise<CommandResult
     throw new Error('Please provide a valid prompt');
   }
 
-  // First, find the best matching category
+  // Try AI service first if available
+  if (aiService.hasApiKey()) {
+    try {
+      const aiResponse = await aiService.generateCommand(prompt);
+      return aiResponse;
+    } catch (error) {
+      console.error('AI service failed, falling back to local database:', error);
+      // Continue to fallback logic below
+    }
+  }
+
+  // Fallback to local command database
   let bestCategoryMatch = null;
   let bestCategoryScore = 0;
-  let matchedKeywords: string[] = [];
 
   for (const [category, data] of Object.entries(commandDatabase)) {
     let score = 0;
-    let currentKeywords: string[] = [];
     
     for (const pattern of data.patterns) {
       if (cleanPrompt.includes(pattern)) {
         score += pattern.length * 2;
-        currentKeywords.push(pattern);
       }
     }
     
     if (score > bestCategoryScore) {
       bestCategoryScore = score;
       bestCategoryMatch = { category, data };
-      matchedKeywords = currentKeywords;
     }
   }
 
@@ -916,8 +926,8 @@ export async function generateBashCommand(prompt: string): Promise<CommandResult
   
   // Default response when no specific match is found
   return {
-    command: 'echo "Command not found. Please be more specific."',
-    explanation: `I couldn't find a specific command for "${prompt}". Try using more specific keywords like: 'nmap' for network scanning, 'msfconsole' for Metasploit, 'meterpreter' for post-exploitation, 'docker' for containers, 'grep' for text search, 'systemctl' for service management, 'git' for version control, 'find' for file search, 'ps' for processes, or describe your task more specifically.`,
+    command: 'echo "No specific command found"',
+    explanation: `No specific command found for "${prompt}". ${aiService.hasApiKey() ? 'Try being more specific with your request.' : 'Consider adding a Groq API key for more accurate AI-powered suggestions.'} Use keywords like: 'nmap' for network scanning, 'msfconsole' for Metasploit, 'docker' for containers, 'grep' for text search, 'find' for file search, etc.`,
     category: 'Help'
   };
 }
