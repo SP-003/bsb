@@ -82,7 +82,7 @@ const Index = () => {
           <div className="flex items-center justify-center space-x-3">
             <Terminal className="h-12 w-12 text-primary glow-text" />
             <h1 className="text-5xl font-bold glow-text">
-              Ethical AI Bash Wizard
+              Bash Wizard
             </h1>
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

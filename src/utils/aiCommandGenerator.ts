@@ -5,172 +5,288 @@ interface CommandResult {
   category: string;
 }
 
-const commandTemplates = {
-  'network_scanning': {
-    patterns: ['scan', 'network', 'port', 'discover', 'hosts', 'nmap', 'ping'],
+const commandDatabase = {
+  // File Operations
+  'file_operations': {
+    patterns: ['file', 'copy', 'move', 'delete', 'remove', 'create', 'touch', 'mkdir', 'rmdir', 'chmod', 'chown', 'ls', 'find', 'locate', 'cp', 'mv', 'rm'],
     commands: [
       {
-        command: 'nmap -sS -sV -O {{target}}',
-        explanation: 'Performs a TCP SYN scan to detect open ports, service versions, and operating system on the target. The -sS flag uses stealth scanning, -sV detects service versions, and -O attempts OS detection.',
-        category: 'Network Scanning'
+        command: 'ls -la',
+        explanation: 'Lists all files and directories in long format, including hidden files, with detailed permissions and ownership information.',
+        category: 'File Operations'
       },
       {
-        command: 'nmap -sn {{network_range}}',
-        explanation: 'Performs a ping scan to discover live hosts in the network range without port scanning. Useful for initial network reconnaissance.',
-        category: 'Network Discovery'
+        command: 'find /path -name "*.txt" -type f',
+        explanation: 'Searches for all .txt files in the specified path and subdirectories.',
+        category: 'File Operations'
+      },
+      {
+        command: 'cp -r source_directory destination_directory',
+        explanation: 'Recursively copies a directory and all its contents to a new location.',
+        category: 'File Operations'
+      },
+      {
+        command: 'chmod 755 filename',
+        explanation: 'Changes file permissions to read, write, execute for owner and read, execute for group and others.',
+        category: 'File Operations'
+      },
+      {
+        command: 'chown user:group filename',
+        explanation: 'Changes the ownership of a file to the specified user and group.',
+        category: 'File Operations'
       }
     ]
   },
-  'ssl_analysis': {
-    patterns: ['ssl', 'certificate', 'tls', 'https', 'cert'],
+
+  // Network Operations
+  'network_operations': {
+    patterns: ['network', 'ping', 'wget', 'curl', 'ssh', 'scp', 'rsync', 'netstat', 'ss', 'iptables', 'firewall', 'port', 'connection'],
     commands: [
       {
-        command: 'openssl s_client -connect {{domain}}:443 -servername {{domain}} | openssl x509 -noout -dates',
-        explanation: 'Connects to the SSL/TLS service and extracts certificate validity dates to check for expiration.',
-        category: 'SSL Analysis'
+        command: 'ping -c 4 google.com',
+        explanation: 'Sends 4 ICMP echo requests to google.com to test network connectivity.',
+        category: 'Network Operations'
       },
       {
-        command: 'sslscan {{domain}}:443',
-        explanation: 'Performs comprehensive SSL/TLS configuration analysis including supported ciphers, protocols, and vulnerabilities.',
-        category: 'SSL Analysis'
+        command: 'curl -I https://example.com',
+        explanation: 'Retrieves HTTP headers from the specified URL without downloading the content.',
+        category: 'Network Operations'
+      },
+      {
+        command: 'wget -r -np -k https://example.com',
+        explanation: 'Recursively downloads a website for offline viewing, converting links for local use.',
+        category: 'Network Operations'
+      },
+      {
+        command: 'ssh user@hostname',
+        explanation: 'Establishes a secure shell connection to a remote server.',
+        category: 'Network Operations'
+      },
+      {
+        command: 'netstat -tulpn',
+        explanation: 'Shows all listening ports and their associated processes.',
+        category: 'Network Operations'
       }
     ]
   },
-  'log_monitoring': {
-    patterns: ['log', 'monitor', 'suspicious', 'activity', 'auth', 'syslog', 'journal'],
+
+  // System Monitoring
+  'system_monitoring': {
+    patterns: ['system', 'process', 'memory', 'cpu', 'disk', 'monitor', 'top', 'htop', 'ps', 'kill', 'df', 'du', 'free', 'uptime', 'load'],
     commands: [
       {
-        command: 'tail -f /var/log/auth.log | grep -i "failed\\|invalid\\|error"',
-        explanation: 'Monitors authentication logs in real-time and filters for failed login attempts, invalid users, and errors.',
-        category: 'Log Monitoring'
+        command: 'top',
+        explanation: 'Displays real-time information about running processes, CPU usage, and memory consumption.',
+        category: 'System Monitoring'
       },
       {
-        command: 'journalctl -f -u ssh.service | grep -E "(Failed|Invalid|Connection closed)"',
-        explanation: 'Monitors SSH service logs in real-time using systemd journal, filtering for connection failures and invalid attempts.',
-        category: 'Log Monitoring'
+        command: 'ps aux | grep process_name',
+        explanation: 'Shows all running processes and filters for a specific process name.',
+        category: 'System Monitoring'
+      },
+      {
+        command: 'df -h',
+        explanation: 'Displays disk space usage for all mounted filesystems in human-readable format.',
+        category: 'System Monitoring'
+      },
+      {
+        command: 'free -h',
+        explanation: 'Shows memory usage including RAM and swap in human-readable format.',
+        category: 'System Monitoring'
+      },
+      {
+        command: 'du -sh /path/*',
+        explanation: 'Shows disk usage of all items in the specified directory in human-readable format.',
+        category: 'System Monitoring'
       }
     ]
   },
-  'vulnerability_scanning': {
-    patterns: ['vulnerability', 'vuln', 'security', 'exploit', 'nikto', 'burp'],
+
+  // Text Processing
+  'text_processing': {
+    patterns: ['text', 'grep', 'sed', 'awk', 'cat', 'head', 'tail', 'sort', 'uniq', 'wc', 'cut', 'tr', 'search', 'replace', 'filter'],
     commands: [
       {
-        command: 'nikto -h {{target_url}}',
-        explanation: 'Performs web vulnerability scanning against the target URL, checking for common web server vulnerabilities and misconfigurations.',
-        category: 'Vulnerability Scanning'
+        command: 'grep -r "search_term" /path',
+        explanation: 'Recursively searches for a specific term in all files within the specified directory.',
+        category: 'Text Processing'
       },
       {
-        command: 'nmap --script vuln {{target}}',
-        explanation: 'Uses Nmap\'s vulnerability detection scripts to identify known vulnerabilities on the target system.',
-        category: 'Vulnerability Scanning'
+        command: 'sed -i "s/old_text/new_text/g" filename',
+        explanation: 'Replaces all occurrences of old_text with new_text in the specified file.',
+        category: 'Text Processing'
+      },
+      {
+        command: 'awk "{print $1}" filename',
+        explanation: 'Prints the first column of each line from the specified file.',
+        category: 'Text Processing'
+      },
+      {
+        command: 'tail -f /var/log/syslog',
+        explanation: 'Continuously displays the last lines of the system log as new entries are added.',
+        category: 'Text Processing'
+      },
+      {
+        command: 'sort filename | uniq -c',
+        explanation: 'Sorts the file contents and counts duplicate lines.',
+        category: 'Text Processing'
       }
     ]
   },
-  'system_hardening': {
-    patterns: ['harden', 'secure', 'permissions', 'firewall', 'ufw', 'iptables'],
+
+  // Archive Operations
+  'archive_operations': {
+    patterns: ['archive', 'compress', 'extract', 'zip', 'unzip', 'tar', 'gzip', 'gunzip', 'backup'],
     commands: [
       {
-        command: 'find / -type f -perm -4000 2>/dev/null',
-        explanation: 'Finds all files with SUID bit set, which could potentially be exploited for privilege escalation.',
-        category: 'System Hardening'
+        command: 'tar -czf archive.tar.gz /path/to/directory',
+        explanation: 'Creates a compressed tar archive of the specified directory.',
+        category: 'Archive Operations'
       },
       {
-        command: 'ufw status verbose && ufw --dry-run enable',
-        explanation: 'Shows current firewall status and simulates enabling UFW without actually applying changes.',
-        category: 'System Hardening'
+        command: 'tar -xzf archive.tar.gz',
+        explanation: 'Extracts a compressed tar archive to the current directory.',
+        category: 'Archive Operations'
+      },
+      {
+        command: 'zip -r archive.zip /path/to/directory',
+        explanation: 'Creates a ZIP archive of the specified directory and its contents.',
+        category: 'Archive Operations'
+      },
+      {
+        command: 'unzip archive.zip -d /destination/path',
+        explanation: 'Extracts a ZIP archive to the specified destination directory.',
+        category: 'Archive Operations'
       }
     ]
   },
-  'file_analysis': {
-    patterns: ['file', 'search', 'find', 'locate', 'grep', 'analysis'],
+
+  // Security & Permissions
+  'security_operations': {
+    patterns: ['security', 'permission', 'user', 'group', 'sudo', 'su', 'passwd', 'useradd', 'usermod', 'userdel', 'groups', 'id', 'whoami'],
     commands: [
       {
-        command: 'find /home -name "*.sh" -type f -executable',
-        explanation: 'Searches for executable shell scripts in the /home directory, useful for finding potential backdoors or suspicious scripts.',
-        category: 'File Analysis'
+        command: 'sudo useradd -m -s /bin/bash username',
+        explanation: 'Creates a new user with a home directory and bash shell.',
+        category: 'Security Operations'
       },
       {
-        command: 'grep -r "password\\|secret\\|key" /var/log/ 2>/dev/null',
-        explanation: 'Searches for sensitive information like passwords, secrets, or keys in log files.',
-        category: 'File Analysis'
+        command: 'sudo passwd username',
+        explanation: 'Changes the password for the specified user.',
+        category: 'Security Operations'
+      },
+      {
+        command: 'groups username',
+        explanation: 'Shows all groups that the specified user belongs to.',
+        category: 'Security Operations'
+      },
+      {
+        command: 'find / -perm -4000 2>/dev/null',
+        explanation: 'Finds all files with SUID bit set, which could be potential security risks.',
+        category: 'Security Operations'
+      }
+    ]
+  },
+
+  // Service Management
+  'service_management': {
+    patterns: ['service', 'systemd', 'systemctl', 'daemon', 'start', 'stop', 'restart', 'enable', 'disable', 'status'],
+    commands: [
+      {
+        command: 'systemctl status service_name',
+        explanation: 'Shows the current status of a systemd service.',
+        category: 'Service Management'
+      },
+      {
+        command: 'sudo systemctl restart service_name',
+        explanation: 'Restarts the specified systemd service.',
+        category: 'Service Management'
+      },
+      {
+        command: 'sudo systemctl enable service_name',
+        explanation: 'Enables a service to start automatically at boot.',
+        category: 'Service Management'
+      },
+      {
+        command: 'journalctl -u service_name -f',
+        explanation: 'Shows real-time logs for the specified systemd service.',
+        category: 'Service Management'
+      }
+    ]
+  },
+
+  // Package Management
+  'package_management': {
+    patterns: ['package', 'install', 'update', 'upgrade', 'remove', 'apt', 'yum', 'dnf', 'pacman', 'zypper', 'snap'],
+    commands: [
+      {
+        command: 'sudo apt update && sudo apt upgrade',
+        explanation: 'Updates the package list and upgrades all installed packages on Debian/Ubuntu systems.',
+        category: 'Package Management'
+      },
+      {
+        command: 'sudo apt install package_name',
+        explanation: 'Installs a package using the APT package manager.',
+        category: 'Package Management'
+      },
+      {
+        command: 'sudo apt remove package_name',
+        explanation: 'Removes an installed package using APT.',
+        category: 'Package Management'
+      },
+      {
+        command: 'apt search keyword',
+        explanation: 'Searches for packages containing the specified keyword.',
+        category: 'Package Management'
       }
     ]
   }
 };
 
 export async function generateBashCommand(prompt: string): Promise<CommandResult> {
-  // Ensure prompt is a string and handle edge cases
   const cleanPrompt = String(prompt || '').trim().toLowerCase();
   
   if (!cleanPrompt) {
     throw new Error('Please provide a valid prompt');
   }
 
-  // Enhanced pattern matching with better scoring
+  // Enhanced pattern matching with scoring
   let bestMatch = null;
   let bestScore = 0;
+  let matchedKeywords: string[] = [];
 
-  for (const [category, data] of Object.entries(commandTemplates)) {
+  for (const [category, data] of Object.entries(commandDatabase)) {
     let score = 0;
+    let currentKeywords: string[] = [];
+    
     for (const pattern of data.patterns) {
       if (cleanPrompt.includes(pattern)) {
-        score += pattern.length; // Longer matches get higher scores
+        score += pattern.length * 2; // Weight longer matches more heavily
+        currentKeywords.push(pattern);
       }
     }
     
     if (score > bestScore) {
       bestScore = score;
       bestMatch = { category, data };
+      matchedKeywords = currentKeywords;
     }
   }
 
   // If we found a good match, use it
   if (bestMatch && bestScore > 0) {
     const randomCommand = bestMatch.data.commands[Math.floor(Math.random() * bestMatch.data.commands.length)];
-    
-    // Enhanced placeholder replacement
-    let command = randomCommand.command;
-    command = command.replace(/\{\{target\}\}/g, 'TARGET_IP_OR_DOMAIN');
-    command = command.replace(/\{\{domain\}\}/g, 'example.com');
-    command = command.replace(/\{\{network_range\}\}/g, '192.168.1.0/24');
-    command = command.replace(/\{\{target_url\}\}/g, 'https://example.com');
-    
     return {
-      command,
+      command: randomCommand.command,
       explanation: randomCommand.explanation,
       category: randomCommand.category
     };
   }
   
-  // Enhanced default fallback commands with better variety
-  const defaultCommands = [
-    {
-      command: 'ps aux | grep -v grep | grep -E "(suspicious_process_name)"',
-      explanation: 'Searches for specific processes that might indicate malicious activity. Replace "suspicious_process_name" with actual process names you want to monitor.',
-      category: 'Process Monitoring'
-    },
-    {
-      command: 'netstat -tulpn | grep LISTEN',
-      explanation: 'Shows all listening ports and associated processes, useful for identifying unexpected network services.',
-      category: 'Network Analysis'
-    },
-    {
-      command: 'ls -la /tmp && find /tmp -type f -executable',
-      explanation: 'Lists contents of /tmp directory and finds executable files, which could indicate malicious activity.',
-      category: 'File Analysis'
-    },
-    {
-      command: 'ss -tuln | grep -E ":22|:80|:443"',
-      explanation: 'Shows listening sockets for common services (SSH, HTTP, HTTPS) using the modern ss command.',
-      category: 'Network Analysis'
-    },
-    {
-      command: 'last -n 20',
-      explanation: 'Shows the last 20 login sessions, useful for detecting unauthorized access attempts.',
-      category: 'Access Monitoring'
-    }
-  ];
-  
-  const randomDefault = defaultCommands[Math.floor(Math.random() * defaultCommands.length)];
-  return randomDefault;
+  // Better default response when no match is found
+  return {
+    command: 'echo "Command not found. Please try a more specific prompt."',
+    explanation: `No matching command found for "${prompt}". Try using keywords like: file operations (ls, cp, mv), network (ping, curl, ssh), system monitoring (top, ps, df), text processing (grep, sed, awk), or package management (apt, yum). Be more specific about what you want to accomplish.`,
+    category: 'Help'
+  };
 }
