@@ -8,7 +8,7 @@ interface CommandResult {
 const commandDatabase = {
   // File Operations
   'file_operations': {
-    patterns: ['file', 'copy', 'move', 'delete', 'remove', 'create', 'touch', 'mkdir', 'rmdir', 'chmod', 'chown', 'ls', 'find', 'locate', 'cp', 'mv', 'rm'],
+    patterns: ['file', 'copy', 'move', 'delete', 'remove', 'create', 'touch', 'mkdir', 'rmdir', 'chmod', 'chown', 'ls', 'find', 'locate', 'cp', 'mv', 'rm', 'ln', 'stat', 'tree', 'file', 'which', 'whereis'],
     commands: [
       {
         command: 'ls -la',
@@ -31,8 +31,18 @@ const commandDatabase = {
         category: 'File Operations'
       },
       {
-        command: 'chown user:group filename',
-        explanation: 'Changes the ownership of a file to the specified user and group.',
+        command: 'tree -L 2',
+        explanation: 'Displays directory structure in tree format, limiting depth to 2 levels.',
+        category: 'File Operations'
+      },
+      {
+        command: 'stat filename',
+        explanation: 'Displays detailed information about a file including size, permissions, timestamps, and inode.',
+        category: 'File Operations'
+      },
+      {
+        command: 'ln -s /path/to/original /path/to/link',
+        explanation: 'Creates a symbolic link from the original file to the specified location.',
         category: 'File Operations'
       }
     ]
@@ -40,31 +50,46 @@ const commandDatabase = {
 
   // Network Operations
   'network_operations': {
-    patterns: ['network', 'ping', 'wget', 'curl', 'ssh', 'scp', 'rsync', 'netstat', 'ss', 'iptables', 'firewall', 'port', 'connection'],
+    patterns: ['network', 'ping', 'wget', 'curl', 'ssh', 'scp', 'rsync', 'netstat', 'ss', 'iptables', 'firewall', 'port', 'connection', 'nmap', 'dig', 'nslookup', 'telnet', 'ftp', 'sftp', 'nc', 'netcat', 'traceroute', 'mtr', 'whois', 'tcpdump', 'wireshark'],
     commands: [
       {
-        command: 'ping -c 4 google.com',
-        explanation: 'Sends 4 ICMP echo requests to google.com to test network connectivity.',
+        command: 'nmap -sn 192.168.1.0/24',
+        explanation: 'Performs a ping scan to discover live hosts in the specified network range.',
         category: 'Network Operations'
       },
       {
-        command: 'curl -I https://example.com',
-        explanation: 'Retrieves HTTP headers from the specified URL without downloading the content.',
+        command: 'nmap -sS -sV -O target_ip',
+        explanation: 'Performs TCP SYN scan with version detection and OS fingerprinting on target.',
         category: 'Network Operations'
       },
       {
-        command: 'wget -r -np -k https://example.com',
-        explanation: 'Recursively downloads a website for offline viewing, converting links for local use.',
-        category: 'Network Operations'
-      },
-      {
-        command: 'ssh user@hostname',
-        explanation: 'Establishes a secure shell connection to a remote server.',
+        command: 'dig google.com',
+        explanation: 'Performs DNS lookup for google.com showing detailed DNS record information.',
         category: 'Network Operations'
       },
       {
         command: 'netstat -tulpn',
         explanation: 'Shows all listening ports and their associated processes.',
+        category: 'Network Operations'
+      },
+      {
+        command: 'ss -tuln',
+        explanation: 'Modern replacement for netstat, shows socket statistics for TCP and UDP.',
+        category: 'Network Operations'
+      },
+      {
+        command: 'tcpdump -i eth0 -w capture.pcap',
+        explanation: 'Captures network packets on eth0 interface and saves to file for analysis.',
+        category: 'Network Operations'
+      },
+      {
+        command: 'nc -l -p 4444',
+        explanation: 'Creates a netcat listener on port 4444 for reverse shell or file transfer.',
+        category: 'Network Operations'
+      },
+      {
+        command: 'traceroute google.com',
+        explanation: 'Traces the network path to google.com showing all intermediate hops.',
         category: 'Network Operations'
       }
     ]
@@ -72,31 +97,41 @@ const commandDatabase = {
 
   // System Monitoring
   'system_monitoring': {
-    patterns: ['system', 'process', 'memory', 'cpu', 'disk', 'monitor', 'top', 'htop', 'ps', 'kill', 'df', 'du', 'free', 'uptime', 'load'],
+    patterns: ['system', 'process', 'memory', 'cpu', 'disk', 'monitor', 'top', 'htop', 'ps', 'kill', 'df', 'du', 'free', 'uptime', 'load', 'iostat', 'vmstat', 'sar', 'lsof', 'who', 'w', 'last', 'history'],
     commands: [
       {
-        command: 'top',
-        explanation: 'Displays real-time information about running processes, CPU usage, and memory consumption.',
+        command: 'htop',
+        explanation: 'Interactive process viewer with color-coded display of CPU, memory usage and system load.',
         category: 'System Monitoring'
       },
       {
-        command: 'ps aux | grep process_name',
-        explanation: 'Shows all running processes and filters for a specific process name.',
+        command: 'ps aux --sort=-%cpu | head -10',
+        explanation: 'Shows top 10 processes consuming the most CPU resources.',
         category: 'System Monitoring'
       },
       {
-        command: 'df -h',
-        explanation: 'Displays disk space usage for all mounted filesystems in human-readable format.',
+        command: 'lsof -i :80',
+        explanation: 'Lists all processes using port 80, useful for identifying web server processes.',
         category: 'System Monitoring'
       },
       {
-        command: 'free -h',
-        explanation: 'Shows memory usage including RAM and swap in human-readable format.',
+        command: 'iostat -x 1',
+        explanation: 'Displays extended I/O statistics for all devices, updating every second.',
         category: 'System Monitoring'
       },
       {
-        command: 'du -sh /path/*',
-        explanation: 'Shows disk usage of all items in the specified directory in human-readable format.',
+        command: 'vmstat 1 5',
+        explanation: 'Shows virtual memory statistics for 5 iterations with 1 second intervals.',
+        category: 'System Monitoring'
+      },
+      {
+        command: 'sar -u 1 10',
+        explanation: 'Displays CPU utilization statistics every second for 10 iterations.',
+        category: 'System Monitoring'
+      },
+      {
+        command: 'who -a',
+        explanation: 'Shows all currently logged in users with detailed login information.',
         category: 'System Monitoring'
       }
     ]
@@ -104,11 +139,11 @@ const commandDatabase = {
 
   // Text Processing
   'text_processing': {
-    patterns: ['text', 'grep', 'sed', 'awk', 'cat', 'head', 'tail', 'sort', 'uniq', 'wc', 'cut', 'tr', 'search', 'replace', 'filter'],
+    patterns: ['text', 'grep', 'sed', 'awk', 'cat', 'head', 'tail', 'sort', 'uniq', 'wc', 'cut', 'tr', 'search', 'replace', 'filter', 'less', 'more', 'vim', 'nano', 'emacs'],
     commands: [
       {
-        command: 'grep -r "search_term" /path',
-        explanation: 'Recursively searches for a specific term in all files within the specified directory.',
+        command: 'grep -r "ERROR" /var/log/',
+        explanation: 'Recursively searches for "ERROR" in all log files under /var/log directory.',
         category: 'Text Processing'
       },
       {
@@ -117,8 +152,8 @@ const commandDatabase = {
         category: 'Text Processing'
       },
       {
-        command: 'awk "{print $1}" filename',
-        explanation: 'Prints the first column of each line from the specified file.',
+        command: 'awk "{print $1, $3}" /etc/passwd',
+        explanation: 'Prints the first and third columns from /etc/passwd file (username and UID).',
         category: 'Text Processing'
       },
       {
@@ -127,8 +162,13 @@ const commandDatabase = {
         category: 'Text Processing'
       },
       {
-        command: 'sort filename | uniq -c',
-        explanation: 'Sorts the file contents and counts duplicate lines.',
+        command: 'sort filename | uniq -c | sort -nr',
+        explanation: 'Sorts file, counts duplicate lines, then sorts by frequency in descending order.',
+        category: 'Text Processing'
+      },
+      {
+        command: 'cut -d: -f1 /etc/passwd',
+        explanation: 'Extracts usernames from /etc/passwd by cutting the first field using colon delimiter.',
         category: 'Text Processing'
       }
     ]
@@ -136,16 +176,16 @@ const commandDatabase = {
 
   // Archive Operations
   'archive_operations': {
-    patterns: ['archive', 'compress', 'extract', 'zip', 'unzip', 'tar', 'gzip', 'gunzip', 'backup'],
+    patterns: ['archive', 'compress', 'extract', 'zip', 'unzip', 'tar', 'gzip', 'gunzip', 'backup', '7z', 'rar', 'bzip2'],
     commands: [
       {
-        command: 'tar -czf archive.tar.gz /path/to/directory',
-        explanation: 'Creates a compressed tar archive of the specified directory.',
+        command: 'tar -czf backup.tar.gz /home/user/',
+        explanation: 'Creates a compressed tar archive of the user home directory.',
         category: 'Archive Operations'
       },
       {
-        command: 'tar -xzf archive.tar.gz',
-        explanation: 'Extracts a compressed tar archive to the current directory.',
+        command: 'tar -xzf archive.tar.gz -C /destination/',
+        explanation: 'Extracts a compressed tar archive to the specified destination directory.',
         category: 'Archive Operations'
       },
       {
@@ -154,8 +194,8 @@ const commandDatabase = {
         category: 'Archive Operations'
       },
       {
-        command: 'unzip archive.zip -d /destination/path',
-        explanation: 'Extracts a ZIP archive to the specified destination directory.',
+        command: '7z a -t7z archive.7z /path/to/directory/',
+        explanation: 'Creates a 7z archive with maximum compression of the specified directory.',
         category: 'Archive Operations'
       }
     ]
@@ -163,26 +203,31 @@ const commandDatabase = {
 
   // Security & Permissions
   'security_operations': {
-    patterns: ['security', 'permission', 'user', 'group', 'sudo', 'su', 'passwd', 'useradd', 'usermod', 'userdel', 'groups', 'id', 'whoami'],
+    patterns: ['security', 'permission', 'user', 'group', 'sudo', 'su', 'passwd', 'useradd', 'usermod', 'userdel', 'groups', 'id', 'whoami', 'chroot', 'umask', 'acl', 'selinux', 'apparmor'],
     commands: [
-      {
-        command: 'sudo useradd -m -s /bin/bash username',
-        explanation: 'Creates a new user with a home directory and bash shell.',
-        category: 'Security Operations'
-      },
-      {
-        command: 'sudo passwd username',
-        explanation: 'Changes the password for the specified user.',
-        category: 'Security Operations'
-      },
-      {
-        command: 'groups username',
-        explanation: 'Shows all groups that the specified user belongs to.',
-        category: 'Security Operations'
-      },
       {
         command: 'find / -perm -4000 2>/dev/null',
         explanation: 'Finds all files with SUID bit set, which could be potential security risks.',
+        category: 'Security Operations'
+      },
+      {
+        command: 'sudo useradd -m -s /bin/bash -G sudo username',
+        explanation: 'Creates a new user with home directory, bash shell, and sudo privileges.',
+        category: 'Security Operations'
+      },
+      {
+        command: 'getfacl filename',
+        explanation: 'Displays Access Control List (ACL) permissions for the specified file.',
+        category: 'Security Operations'
+      },
+      {
+        command: 'chattr +i filename',
+        explanation: 'Makes a file immutable, preventing it from being modified or deleted.',
+        category: 'Security Operations'
+      },
+      {
+        command: 'last -n 10',
+        explanation: 'Shows the last 10 login sessions, useful for security auditing.',
         category: 'Security Operations'
       }
     ]
@@ -190,26 +235,26 @@ const commandDatabase = {
 
   // Service Management
   'service_management': {
-    patterns: ['service', 'systemd', 'systemctl', 'daemon', 'start', 'stop', 'restart', 'enable', 'disable', 'status'],
+    patterns: ['service', 'systemd', 'systemctl', 'daemon', 'start', 'stop', 'restart', 'enable', 'disable', 'status', 'journalctl', 'cron', 'crontab', 'at', 'batch'],
     commands: [
       {
-        command: 'systemctl status service_name',
-        explanation: 'Shows the current status of a systemd service.',
+        command: 'systemctl --failed',
+        explanation: 'Lists all failed systemd services that need attention.',
         category: 'Service Management'
       },
       {
-        command: 'sudo systemctl restart service_name',
-        explanation: 'Restarts the specified systemd service.',
+        command: 'journalctl -u apache2 --since "1 hour ago"',
+        explanation: 'Shows logs for apache2 service from the last hour.',
         category: 'Service Management'
       },
       {
-        command: 'sudo systemctl enable service_name',
-        explanation: 'Enables a service to start automatically at boot.',
+        command: 'crontab -l',
+        explanation: 'Lists all scheduled cron jobs for the current user.',
         category: 'Service Management'
       },
       {
-        command: 'journalctl -u service_name -f',
-        explanation: 'Shows real-time logs for the specified systemd service.',
+        command: 'systemctl list-units --type=service --state=running',
+        explanation: 'Lists all currently running systemd services.',
         category: 'Service Management'
       }
     ]
@@ -217,27 +262,145 @@ const commandDatabase = {
 
   // Package Management
   'package_management': {
-    patterns: ['package', 'install', 'update', 'upgrade', 'remove', 'apt', 'yum', 'dnf', 'pacman', 'zypper', 'snap'],
+    patterns: ['package', 'install', 'update', 'upgrade', 'remove', 'apt', 'yum', 'dnf', 'pacman', 'zypper', 'snap', 'flatpak', 'pip', 'npm', 'gem'],
     commands: [
       {
-        command: 'sudo apt update && sudo apt upgrade',
-        explanation: 'Updates the package list and upgrades all installed packages on Debian/Ubuntu systems.',
+        command: 'apt list --upgradable',
+        explanation: 'Shows all packages that have available updates on Debian/Ubuntu systems.',
         category: 'Package Management'
       },
       {
-        command: 'sudo apt install package_name',
-        explanation: 'Installs a package using the APT package manager.',
+        command: 'dnf search keyword',
+        explanation: 'Searches for packages containing the keyword in Fedora/RHEL systems.',
         category: 'Package Management'
       },
       {
-        command: 'sudo apt remove package_name',
-        explanation: 'Removes an installed package using APT.',
+        command: 'snap list',
+        explanation: 'Lists all installed snap packages with their versions.',
         category: 'Package Management'
       },
       {
-        command: 'apt search keyword',
-        explanation: 'Searches for packages containing the specified keyword.',
+        command: 'pip list --outdated',
+        explanation: 'Shows all outdated Python packages installed via pip.',
         category: 'Package Management'
+      }
+    ]
+  },
+
+  // Database Operations
+  'database_operations': {
+    patterns: ['database', 'mysql', 'postgresql', 'sqlite', 'mongo', 'redis', 'sql', 'backup', 'dump', 'restore'],
+    commands: [
+      {
+        command: 'mysqldump -u root -p database_name > backup.sql',
+        explanation: 'Creates a backup of MySQL database to a SQL file.',
+        category: 'Database Operations'
+      },
+      {
+        command: 'pg_dump -U username database_name > backup.sql',
+        explanation: 'Creates a backup of PostgreSQL database to a SQL file.',
+        category: 'Database Operations'
+      },
+      {
+        command: 'sqlite3 database.db ".dump" > backup.sql',
+        explanation: 'Creates a backup of SQLite database to a SQL file.',
+        category: 'Database Operations'
+      },
+      {
+        command: 'redis-cli --rdb backup.rdb',
+        explanation: 'Creates a backup of Redis database in RDB format.',
+        category: 'Database Operations'
+      }
+    ]
+  },
+
+  // Web Server Operations
+  'web_server_operations': {
+    patterns: ['apache', 'nginx', 'web', 'server', 'http', 'https', 'ssl', 'certificate', 'vhost', 'site'],
+    commands: [
+      {
+        command: 'apache2ctl configtest',
+        explanation: 'Tests Apache configuration files for syntax errors.',
+        category: 'Web Server Operations'
+      },
+      {
+        command: 'nginx -t',
+        explanation: 'Tests Nginx configuration files for syntax errors.',
+        category: 'Web Server Operations'
+      },
+      {
+        command: 'openssl x509 -in certificate.crt -text -noout',
+        explanation: 'Displays detailed information about an SSL certificate.',
+        category: 'Web Server Operations'
+      },
+      {
+        command: 'curl -I -k https://example.com',
+        explanation: 'Retrieves HTTP headers from HTTPS site, ignoring SSL certificate errors.',
+        category: 'Web Server Operations'
+      }
+    ]
+  },
+
+  // System Information
+  'system_information': {
+    patterns: ['info', 'information', 'version', 'kernel', 'hardware', 'cpu', 'memory', 'disk', 'uname', 'lscpu', 'lsblk', 'lsusb', 'lspci', 'dmidecode'],
+    commands: [
+      {
+        command: 'uname -a',
+        explanation: 'Displays complete system information including kernel version and architecture.',
+        category: 'System Information'
+      },
+      {
+        command: 'lscpu',
+        explanation: 'Displays detailed CPU architecture and feature information.',
+        category: 'System Information'
+      },
+      {
+        command: 'lsblk',
+        explanation: 'Lists all block devices in tree format showing disk partitioning.',
+        category: 'System Information'
+      },
+      {
+        command: 'dmidecode -t memory',
+        explanation: 'Shows detailed memory information including type, speed, and slots.',
+        category: 'System Information'
+      },
+      {
+        command: 'lshw -short',
+        explanation: 'Displays hardware information in short format.',
+        category: 'System Information'
+      }
+    ]
+  },
+
+  // Development Tools
+  'development_tools': {
+    patterns: ['git', 'docker', 'kubernetes', 'k8s', 'make', 'gcc', 'python', 'node', 'java', 'build', 'compile', 'debug'],
+    commands: [
+      {
+        command: 'git log --oneline --graph --all',
+        explanation: 'Shows git commit history in a compact graphical format for all branches.',
+        category: 'Development Tools'
+      },
+      {
+        command: 'docker ps -a',
+        explanation: 'Lists all Docker containers including stopped ones.',
+        category: 'Development Tools'
+      },
+      {
+        command: 'kubectl get pods --all-namespaces',
+        explanation: 'Lists all Kubernetes pods across all namespaces.',
+        category: 'Development Tools'
+      },
+      {
+        command: 'make clean && make',
+        explanation: 'Cleans previous build artifacts and compiles the project.',
+        category: 'Development Tools'
+      },
+      {
+        command: 'strace -p PID',
+        explanation: 'Traces system calls made by a running process for debugging.',
+        category: 'Development Tools'
       }
     ]
   }
@@ -285,8 +448,8 @@ export async function generateBashCommand(prompt: string): Promise<CommandResult
   
   // Better default response when no match is found
   return {
-    command: 'echo "Command not found. Please try a more specific prompt."',
-    explanation: `No matching command found for "${prompt}". Try using keywords like: file operations (ls, cp, mv), network (ping, curl, ssh), system monitoring (top, ps, df), text processing (grep, sed, awk), or package management (apt, yum). Be more specific about what you want to accomplish.`,
+    command: 'echo "No matching command found. Try being more specific."',
+    explanation: `I couldn't find a matching command for "${prompt}". Try using specific keywords like: nmap (network scanning), grep (text search), systemctl (service management), docker (containers), git (version control), find (file search), ps (processes), netstat (network connections), or describe your task more specifically (e.g., "scan network for open ports", "search for text in files", "monitor CPU usage").`,
     category: 'Help'
   };
 }

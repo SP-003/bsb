@@ -15,7 +15,7 @@ const AboutSection: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Info className="h-5 w-5 text-primary" />
-          <span>About Ethical AI Bash Wizard</span>
+          <span>About Bash Wizard</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -26,7 +26,7 @@ const AboutSection: React.FC = () => {
             <span>What is this tool?</span>
           </h3>
           <p className="text-muted-foreground leading-relaxed">
-            The Ethical AI Bash Wizard is an AI-powered command generator designed specifically for 
+            Bash Wizard is an AI-powered command generator designed specifically for 
             cybersecurity professionals, penetration testers, and security researchers. It generates 
             Linux bash commands for ethical hacking, security testing, and system analysis based on 
             natural language prompts.
@@ -104,6 +104,10 @@ const AboutSection: React.FC = () => {
             <Badge variant="secondary" className="justify-center">Vulnerability Scanning</Badge>
             <Badge variant="secondary" className="justify-center">System Hardening</Badge>
             <Badge variant="secondary" className="justify-center">File Analysis</Badge>
+            <Badge variant="secondary" className="justify-center">Database Operations</Badge>
+            <Badge variant="secondary" className="justify-center">Web Server Management</Badge>
+            <Badge variant="secondary" className="justify-center">Development Tools</Badge>
+            <Badge variant="secondary" className="justify-center">Package Management</Badge>
           </div>
         </div>
 

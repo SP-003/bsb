@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -87,7 +86,6 @@ const Index = () => {
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Generate Linux terminal commands for ethical hacking and security research.
-            Powered by AI, guided by ethics.
           </p>
           <div className="flex items-center justify-center space-x-4">
             <div className="flex items-center space-x-2">
