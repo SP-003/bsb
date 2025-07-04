@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,9 +27,17 @@ const Index = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [showAbout, setShowAbout] = useState(false);
 
+  const MIN_PROMPT_LENGTH = 200;
+  const isPromptValid = prompt.trim().length >= MIN_PROMPT_LENGTH;
+
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast.error('Please enter a prompt');
+      return;
+    }
+
+    if (!isPromptValid) {
+      toast.error(`Please provide a more detailed description (at least ${MIN_PROMPT_LENGTH} characters)`);
       return;
     }
 
@@ -128,19 +137,29 @@ const Index = () => {
                 placeholder="e.g., Scan for open ports on a network range, Check SSL certificate expiration, Monitor system logs for suspicious activity..."
                 className="min-h-[100px] terminal-border bg-input text-foreground resize-none"
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && e.ctrlKey) {
+                  if (e.key === 'Enter' && e.ctrlKey && isPromptValid) {
                     handleGenerate();
                   }
                 }}
               />
-              <p className="text-xs text-muted-foreground">
-                Press Ctrl+Enter to generate • Be specific about your security testing needs
-              </p>
+              <div className="flex items-center justify-between text-xs">
+                <p className="text-muted-foreground">
+                  Press Ctrl+Enter to generate • Be specific about your security testing needs
+                </p>
+                <div className={`font-mono ${prompt.trim().length >= MIN_PROMPT_LENGTH ? 'text-green-500' : 'text-red-500'}`}>
+                  {prompt.trim().length}/{MIN_PROMPT_LENGTH}
+                </div>
+              </div>
+              {!isPromptValid && prompt.trim().length > 0 && (
+                <p className="text-xs text-red-500">
+                  Please provide more details (minimum {MIN_PROMPT_LENGTH} characters required for accurate command generation)
+                </p>
+              )}
             </div>
             <Button
               onClick={handleGenerate}
-              disabled={isGenerating || !prompt.trim()}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              disabled={isGenerating || !isPromptValid}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold disabled:opacity-50"
             >
               {isGenerating ? (
                 <>
