@@ -914,10 +914,10 @@ export async function generateBashCommand(prompt: string): Promise<CommandResult
     }
   }
   
-  // Default response when no specific match is found
+  // Return proper "not found" response when no specific match is found
   return {
-    command: 'echo "Command not found. Please be more specific."',
-    explanation: `I couldn't find a specific command for "${prompt}". Try using more specific keywords like: 'nmap' for network scanning, 'msfconsole' for Metasploit, 'meterpreter' for post-exploitation, 'docker' for containers, 'grep' for text search, 'systemctl' for service management, 'git' for version control, 'find' for file search, 'ps' for processes, or describe your task more specifically.`,
-    category: 'Help'
+    command: 'No command found',
+    explanation: `No matching command found for "${prompt}". Please try using more specific keywords such as: 'nmap' for network scanning, 'msfconsole' for Metasploit, 'meterpreter' for post-exploitation, 'docker' for containers, 'grep' for text search, 'systemctl' for service management, 'git' for version control, 'find' for file search, 'ps' for processes, or describe your security testing task with more specific technical details.`,
+    category: 'Not Found'
   };
 }
